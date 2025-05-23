@@ -20,8 +20,8 @@ public class RoomResponse {
     private String roomType;
     private BigDecimal roomPrice;
     private boolean isBooked;
-    private String photo;
-    private List<BookingResponse> bookings;
+    private String photo; //trả về client url ảnh
+    private List<BookingResponse> bookings; //1 phòng chứa nhiều đặt phòng | danh sách phòng này từng được đặt(lịch sử)
 
     public RoomResponse(Long id, String roomType, BigDecimal roomPrice) {
         this.id = id;
