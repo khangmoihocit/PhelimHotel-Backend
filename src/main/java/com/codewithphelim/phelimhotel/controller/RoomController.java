@@ -8,6 +8,7 @@ import com.codewithphelim.phelimhotel.response.RoomResponse;
 import com.codewithphelim.phelimhotel.service.BookingService;
 import com.codewithphelim.phelimhotel.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +42,12 @@ public class RoomController {
         return roomService.getAllRoomTypes();
     }
 
+    @DeleteMapping("/delete/room/{roomId}")
+    public ResponseEntity<Void> deleteRoom(@PathVariable Long roomId){
+        roomService.deleteRoomById(roomId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @GetMapping("/get-all-room")
     public ResponseEntity<List<RoomResponse>> getAllRooms() throws SQLException {
         return ResponseEntity.ok(roomService.getAllRooms());
@@ -69,4 +76,6 @@ public class RoomController {
         }
         return new RoomResponse(bookingResponses, room.isBooked(), room.getRoomType(), room.getRoomPrice(), photoBytes, room.getId());
     }
+
+
 }
