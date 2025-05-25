@@ -13,12 +13,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/rooms")
@@ -43,7 +45,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/delete/room/{roomId}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable Long roomId){
+    public ResponseEntity<Void> deleteRoom(@PathVariable Long roomId) {
         roomService.deleteRoomById(roomId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -53,7 +55,34 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getAllRooms());
     }
 
-    //trả về phòng, phòng này chứa các phòng được đặt
+    @PutMapping("/update/{roomId}")
+    public ResponseEntity<RoomResponse> updateRoom(@PathVariable Long roomId,
+                                                   @RequestParam(value = "photo", required = false) MultipartFile photo,
+                                                   @RequestParam(value = "roomType", required = false) String roomType,
+                                                   @RequestParam(value = "roomPrice", required = false) BigDecimal roomPrice) throws IOException, SQLException {
+        //ảnh được truyền vào để cập nhật khác null thì lấy ảnh đó
+        byte[] photoBytes = photo != null && !photo.isEmpty() ?
+                photo.getBytes() : roomService.getRoomPhotoByRoomId(roomId);
+
+        //blob để lưu vào database
+        Blob photoBlob = photoBytes != null && photoBytes.length > 0 ? new SerialBlob(photoBytes) : null;
+        Room theRoom = roomService.updateRoom(roomId, roomType, roomPrice, photoBytes);
+        theRoom.setPhoto(photoBlob);
+        RoomResponse roomResponse = getRoomResponse(theRoom);
+        return ResponseEntity.ok(roomResponse);
+    }
+
+    @GetMapping("/room/{roomId}")
+    public ResponseEntity<RoomResponse> getRoomById(@PathVariable Long roomId){
+        Optional<Room> theRoom = roomService.getRoomById(roomId);
+
+        return theRoom.map(room -> {
+            RoomResponse roomResponse = getRoomResponse(room);
+            return ResponseEntity.ok(roomResponse);
+        }).orElseThrow(()->new OurException("Không tìm thấy phòng"));
+    }
+
+    //map room entity sang room response
     private RoomResponse getRoomResponse(Room room) {
         List<BookedRoom> bookings = bookingService.getAllBookingByRoomId(room.getId()); //danh sách phòng đang được đặt trong database
         List<BookingResponse> bookingResponses = bookings //danh sách phòng được đặt cho client
@@ -66,11 +95,10 @@ public class RoomController {
                 .toList();
         byte[] photoBytes = null;
         Blob photoBlob = room.getPhoto();
-        if(photoBlob != null){
-            try{
+        if (photoBlob != null) {
+            try {
                 photoBytes = photoBlob.getBytes(1, (int) photoBlob.length());
-            }
-            catch (SQLException e){
+            } catch (SQLException e) {
                 throw new OurException(e.getMessage());
             }
         }
