@@ -1,16 +1,9 @@
 package com.codewithphelim.phelimhotel.response;
 
-import com.codewithphelim.phelimhotel.model.BookedRoom;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Lob;
-import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
-
 import java.math.BigDecimal;
-import java.sql.Blob;
 import java.util.List;
 
 @Data
