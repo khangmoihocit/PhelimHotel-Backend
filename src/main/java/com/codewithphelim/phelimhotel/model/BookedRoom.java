@@ -21,8 +21,8 @@ public class BookedRoom {
     private LocalDate checkOutDate;
     private String guestFullName;
     private String guestEmail;
-    private int numOfAdults;
-    private int numOfChildren;
+    private int numberOfAdults;
+    private int numberOfChildren;
     private int totalNumOfGuest;
     private String bookingConfirmationCode;
 
@@ -31,16 +31,16 @@ public class BookedRoom {
     private Room room;
 
     public void calculateTotalNumOfGuest(){
-        this.totalNumOfGuest = this.numOfAdults + this.numOfChildren;
+        this.totalNumOfGuest = this.numberOfAdults + this.numberOfChildren;
     }
 
     public void setNumOfChildren(int numOfChildren) {
-        this.numOfChildren = numOfChildren;
+        this.numberOfChildren = numOfChildren;
         calculateTotalNumOfGuest();
     }
 
     public void setNumOfAdults(int numOfAdults) {
-        this.numOfAdults = numOfAdults;
+        this.numberOfAdults = numOfAdults;
         calculateTotalNumOfGuest();
     }
 

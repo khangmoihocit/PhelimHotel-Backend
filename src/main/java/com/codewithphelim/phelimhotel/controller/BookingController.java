@@ -1,5 +1,6 @@
 package com.codewithphelim.phelimhotel.controller;
 
+import com.codewithphelim.phelimhotel.exception.InvalidBookingRequestException;
 import com.codewithphelim.phelimhotel.exception.OurException;
 import com.codewithphelim.phelimhotel.model.BookedRoom;
 import com.codewithphelim.phelimhotel.model.Room;
@@ -50,10 +51,10 @@ public class BookingController {
             String confirmationCode = bookingService.saveBooking(roomId, bookingRequest);
             return ResponseEntity.ok("Đặt phòng thành công! Mã code phòng của bạn là: " + confirmationCode);
 
-        } catch (OurException exception) {
+        } catch (InvalidBookingRequestException exception) {
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
-    }
+    }   
 
     @DeleteMapping("/booking/{bookingId}/delete")
     public void cancelBooking(@PathVariable Long bookingId) {
@@ -72,8 +73,8 @@ public class BookingController {
                 booking.getCheckOutDate(),
                 booking.getGuestFullName(),
                 booking.getGuestEmail(),
-                booking.getNumOfAdults(),
-                booking.getNumOfChildren(),
+                booking.getNumberOfAdults(),
+                booking.getNumberOfChildren(),
                 booking.getTotalNumOfGuest(),
                 booking.getBookingConfirmationCode(),
                 roomResponse);
