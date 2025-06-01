@@ -40,7 +40,7 @@ public class BookingController {
             BookedRoom bookedRoom = bookingService.findByConfirmationCode(confirmationCode);
             BookingResponse bookingResponse = getBookingResponse(bookedRoom);
             return ResponseEntity.ok(bookingResponse);
-        } catch (Exception e) {
+        } catch (OurException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }

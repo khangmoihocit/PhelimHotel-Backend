@@ -1,6 +1,7 @@
 package com.codewithphelim.phelimhotel.service.Impl;
 
 import com.codewithphelim.phelimhotel.exception.InvalidBookingRequestException;
+import com.codewithphelim.phelimhotel.exception.OurException;
 import com.codewithphelim.phelimhotel.model.BookedRoom;
 import com.codewithphelim.phelimhotel.model.Room;
 import com.codewithphelim.phelimhotel.repository.BookingRepository;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -54,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookedRoom findByConfirmationCode(String confirmationCode) {
-        return bookingRepository.findByBookingConfirmationCode(confirmationCode);
+        return bookingRepository.findByBookingConfirmationCode(confirmationCode).orElseThrow(()-> new OurException("Lỗi, không tìm thấy đặt phòng có code là: " + confirmationCode));
     }
 
     @Override
