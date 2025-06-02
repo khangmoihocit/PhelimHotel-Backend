@@ -25,7 +25,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookedRoom> getAllBookingByRoomId(Long roomId) {
-
         return bookingRepository.findByRoomId(roomId);
     }
 

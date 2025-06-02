@@ -7,7 +7,10 @@ import com.codewithphelim.phelimhotel.response.BookingResponse;
 import com.codewithphelim.phelimhotel.response.RoomResponse;
 import com.codewithphelim.phelimhotel.service.BookingService;
 import com.codewithphelim.phelimhotel.service.RoomService;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +86,32 @@ public class RoomController {
         }).orElseThrow(()->new OurException("Không tìm thấy phòng"));
     }
 
+    public ResponseEntity<List<RoomResponse>> getAvailableRooms(
+            @RequestParam("checkInDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
+            @RequestParam("checkOutDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
+            @RequestParam("roomType") String roomType) throws SQLException {
+        List<Room> availableRooms = roomService.getAvailableRooms(checkInDate, checkOutDate, roomType);
+        List<RoomResponse> roomResponses = new ArrayList<>();
+        for (Room room : availableRooms){
+            byte[] photoBytes = roomService.getRoomPhotoByRoomId(room.getId());
+            if(photoBytes != null && photoBytes.length > 0){
+                String photoBase64 = Base64.encodeBase64String(photoBytes);
+                RoomResponse roomResponse = getRoomResponse(room);
+                roomResponse.setPhoto(photoBase64);
+                roomResponses.add(roomResponse);
+            }
+        }
+
+        if(roomResponses.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }else{
+            return ResponseEntity.ok(roomResponses);
+        }
+    }
+
+
+
+
     //map room entity sang room response
     private RoomResponse getRoomResponse(Room room) {
         List<BookedRoom> bookings = bookingService.getAllBookingByRoomId(room.getId()); //danh sách phòng đang được đặt trong database
@@ -104,6 +134,8 @@ public class RoomController {
         }
         return new RoomResponse(bookingResponses, room.isBooked(), room.getRoomType(), room.getRoomPrice(), photoBytes, room.getId());
     }
+
+
 
 
 }
