@@ -86,10 +86,11 @@ public class RoomController {
         }).orElseThrow(()->new OurException("Không tìm thấy phòng"));
     }
 
+    @GetMapping("/available-rooms")
     public ResponseEntity<List<RoomResponse>> getAvailableRooms(
             @RequestParam("checkInDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkInDate,
             @RequestParam("checkOutDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOutDate,
-            @RequestParam("roomType") String roomType) throws SQLException {
+            @RequestParam(value = "roomType") String roomType) throws SQLException {
         List<Room> availableRooms = roomService.getAvailableRooms(checkInDate, checkOutDate, roomType);
         List<RoomResponse> roomResponses = new ArrayList<>();
         for (Room room : availableRooms){
