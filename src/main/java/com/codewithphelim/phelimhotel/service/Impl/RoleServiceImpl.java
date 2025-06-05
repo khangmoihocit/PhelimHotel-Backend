@@ -63,7 +63,7 @@ public class RoleServiceImpl implements RoleService {
         Optional<User> user = userRepository.findById(userId);
         Optional<Role> role = roleRepository.findById(roleId);
         if(user.isPresent() && user.get().getRoles().contains(role.get())){
-            throw new OurException("user " + user.get().getFirstName() + " đã có role " + role.get().getName());
+            throw new OurException("user " + user.get().getName() + " đã có role " + role.get().getName());
         }
         if(role.isPresent()){
             role.get().assignRoleToUser(user.get());

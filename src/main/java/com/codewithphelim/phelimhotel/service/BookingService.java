@@ -11,4 +11,5 @@ public interface BookingService {
     String saveBooking(Long roomId, BookedRoom bookingRequest);
     BookedRoom findByConfirmationCode(String confirmationCode);
     List<BookedRoom> getAllBookings();
+    List<BookedRoom> getBookingsByUserEmail(String email);
 }
