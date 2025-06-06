@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User registerUser(User user) {
         if(userRepository.existsByEmail(user.getEmail())){
-            throw new OurException(user.getEmail() + "đã tồn tại");
+            throw new OurException("email " + user.getEmail() + " đã được đăng ký");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role userRole = roleRepository.findByName("ROLE_USER").get();
